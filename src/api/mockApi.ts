@@ -1,8 +1,15 @@
-import type { CountriesMap, GeoResponse } from './types'
+import type {
+  CountriesMap,
+  GeoResponse,
+  GetSearchPricesResponse,
+  StartSearchResponse,
+} from './types'
 
 import {
   getCountries as apiGetCountries,
+  getSearchPrices as apiGetSearchPrices,
   searchGeo as apiSearchGeo,
+  startSearchPrices as apiStartSearchPrices,
 } from './api.js'
 
 async function parseJson<T>(resp: Response): Promise<T> {
@@ -28,4 +35,16 @@ export async function getCountries(): Promise<CountriesMap> {
 
 export async function searchGeo(query: string): Promise<GeoResponse> {
   return await call<GeoResponse>(apiSearchGeo(query))
+}
+
+export async function startSearchPrices(
+  countryID: string,
+): Promise<StartSearchResponse> {
+  return await call<StartSearchResponse>(apiStartSearchPrices(countryID))
+}
+
+export async function getSearchPrices(
+  token: string,
+): Promise<GetSearchPricesResponse> {
+  return await call<GetSearchPricesResponse>(apiGetSearchPrices(token))
 }

@@ -18,3 +18,30 @@ export type GeoEntity =
   | (Hotel & { type: 'hotel' })
 
 export type GeoResponse = Record<string, GeoEntity>
+
+export type PriceOffer = {
+  id: string
+  amount: number
+  currency: string
+  startDate: string
+  endDate: string
+  hotelID?: string
+}
+
+export type PricesMap = Record<string, PriceOffer>
+
+export type StartSearchResponse = {
+  token: string
+  waitUntil: string
+}
+
+export type GetSearchPricesResponse = {
+  prices: PricesMap
+}
+
+export type ErrorResponse = {
+  code: number
+  error: true
+  message: string
+  waitUntil?: string
+}

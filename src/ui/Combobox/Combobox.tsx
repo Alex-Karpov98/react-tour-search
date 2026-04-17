@@ -82,8 +82,8 @@ export function Combobox<TItem extends ComboboxItem>({
   )
 
   const statusText = useMemo(() => {
-    if (loading) return 'Loading…'
-    if (items.length === 0) return 'No results'
+    if (loading) return 'Завантаження…'
+    if (items.length === 0) return 'Нічого не знайдено'
     return null
   }, [items.length, loading])
 
@@ -112,7 +112,7 @@ export function Combobox<TItem extends ComboboxItem>({
               setOpen(true)
               void load('', { source: 'open' })
             }}
-            aria-label="Clear"
+            aria-label="Очистити"
           >
             ×
           </button>

@@ -10,6 +10,7 @@ export type GeoItem = {
   name: string
   kind: GeoKind
   flagUrl?: string
+  countryId?: string
 }
 
 export async function getCountries(): Promise<GeoItem[]> {
@@ -29,5 +30,11 @@ export async function searchGeo(search: string): Promise<GeoItem[]> {
     name: x.name,
     kind: x.type,
     flagUrl: x.type === 'country' ? x.flag : undefined,
+    countryId:
+      x.type === 'country'
+        ? x.id
+        : 'countryId' in x && typeof x.countryId === 'string'
+          ? x.countryId
+          : undefined,
   }))
 }

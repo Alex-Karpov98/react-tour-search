@@ -1,0 +1,25 @@
+.primaryButton {
+  height: 48px;
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #3b5bff 0%, #2f4cff 100%);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primaryButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.searchStatus {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.searchStatusError {
+  color: #b91c1c;
+}

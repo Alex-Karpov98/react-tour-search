@@ -1,4 +1,5 @@
 import { TourSearchForm } from '../../widgets/TourSearchForm/TourSearchForm'
+import './TourSearchPage.css'
 
 export function TourSearchPage() {
   return (
