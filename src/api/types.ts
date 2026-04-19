@@ -11,6 +11,7 @@ export type Hotel = {
 }
 
 export type CountriesMap = Record<string, Country>
+export type HotelsMap = Record<string, Hotel>
 
 export type GeoEntity =
   | (Country & { type: 'country' })

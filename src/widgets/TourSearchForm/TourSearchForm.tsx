@@ -17,7 +17,12 @@ type SearchState =
   | { status: 'empty' }
   | { status: 'success'; prices: PricesMap }
 
-export function TourSearchForm() {
+type Props = {
+  onSuccess: (args: { countryId: string; prices: PricesMap }) => void
+  onEmpty: (countryId: string) => void
+}
+
+export function TourSearchForm({ onSuccess, onEmpty }: Props) {
   const [selection, setSelection] = useState<Selection>({
     item: null,
     inputValue: '',
@@ -66,11 +71,13 @@ export function TourSearchForm() {
 
       const cached = cacheRef.current.get(resolvedCountryId)
       if (cached) {
-        setSearchState(
-          Object.keys(cached).length === 0
-            ? { status: 'empty' }
-            : { status: 'success', prices: cached },
-        )
+        if (Object.keys(cached).length === 0) {
+          setSearchState({ status: 'empty' })
+          onEmpty(resolvedCountryId)
+        } else {
+          setSearchState({ status: 'success', prices: cached })
+          onSuccess({ countryId: resolvedCountryId, prices: cached })
+        }
         return
       }
 
@@ -78,11 +85,13 @@ export function TourSearchForm() {
       try {
         const prices = await runSearchPrices({ countryId: resolvedCountryId })
         cacheRef.current.set(resolvedCountryId, prices)
-        setSearchState(
-          Object.keys(prices).length === 0
-            ? { status: 'empty' }
-            : { status: 'success', prices },
-        )
+        if (Object.keys(prices).length === 0) {
+          setSearchState({ status: 'empty' })
+          onEmpty(resolvedCountryId)
+        } else {
+          setSearchState({ status: 'success', prices })
+          onSuccess({ countryId: resolvedCountryId, prices })
+        }
       } catch {
         setSearchState({
           status: 'error',
@@ -90,7 +99,7 @@ export function TourSearchForm() {
         })
       }
     },
-    [resolvedCountryId],
+    [resolvedCountryId, onEmpty, onSuccess],
   )
 
   return (

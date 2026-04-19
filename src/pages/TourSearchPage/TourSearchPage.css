@@ -1,8 +1,15 @@
 .appPage {
   min-height: 100dvh;
-  display: grid;
-  place-items: center;
+  display: flex;
+  justify-content: center;
   padding: 32px 16px;
+}
+
+.pageStack {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
 }
 
 .panel {

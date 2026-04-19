@@ -2,12 +2,14 @@ import type {
   CountriesMap,
   GeoResponse,
   GetSearchPricesResponse,
+  HotelsMap,
   StartSearchResponse,
 } from './types'
 
 import {
   getCountries as apiGetCountries,
   getSearchPrices as apiGetSearchPrices,
+  getHotels as apiGetHotels,
   searchGeo as apiSearchGeo,
   startSearchPrices as apiStartSearchPrices,
 } from './api.js'
@@ -47,4 +49,8 @@ export async function getSearchPrices(
   token: string,
 ): Promise<GetSearchPricesResponse> {
   return await call<GetSearchPricesResponse>(apiGetSearchPrices(token))
+}
+
+export async function getHotels(countryID: string): Promise<HotelsMap> {
+  return await call<HotelsMap>(apiGetHotels(countryID))
 }
