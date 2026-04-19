@@ -2,7 +2,10 @@ import { type FormEvent, useCallback, useMemo, useRef, useState } from 'react'
 import { type GeoItem, getCountries, searchGeo } from '../../api/geo'
 import { Combobox } from '../../ui/Combobox/Combobox'
 import type { PricesMap } from '../../api/types'
-import { runSearchPrices } from '../../services/searchPricesService'
+import {
+  cancelSearch,
+  runSearchPrices,
+} from '../../services/searchPricesService'
 import './TourSearchForm.css'
 
 type Selection = {
@@ -13,6 +16,7 @@ type Selection = {
 type SearchState =
   | { status: 'idle' }
   | { status: 'loading' }
+  | { status: 'cancelling' }
   | { status: 'error'; message: string }
   | { status: 'empty' }
   | { status: 'success'; prices: PricesMap }
@@ -34,6 +38,10 @@ export function TourSearchForm({ onSuccess, onEmpty }: Props) {
   const cacheRef = useRef<
     Map<string, { countryId: string; prices: PricesMap }>
   >(new Map())
+
+  const controllerRef = useRef<AbortController | null>(null)
+  const activeTokenRef = useRef<string | null>(null)
+  const runIdRef = useRef(0)
 
   const showCountriesOnOpen = useMemo(
     () => selection.item?.kind === 'country' || !selection.item,
@@ -77,6 +85,23 @@ export function TourSearchForm({ onSuccess, onEmpty }: Props) {
         return
       }
 
+      if (controllerRef.current) {
+        const token = activeTokenRef.current
+        setSearchState({ status: 'cancelling' })
+
+        controllerRef.current.abort()
+        controllerRef.current = null
+        activeTokenRef.current = null
+
+        if (token) {
+          try {
+            await cancelSearch(token)
+          } catch {
+            // ignore
+          }
+        }
+      }
+
       const cached = cacheRef.current.get(criteriaKey)
       if (cached) {
         if (Object.keys(cached.prices).length === 0) {
@@ -89,9 +114,22 @@ export function TourSearchForm({ onSuccess, onEmpty }: Props) {
         return
       }
 
+      const runId = (runIdRef.current += 1)
+      const controller = new AbortController()
+      controllerRef.current = controller
+      activeTokenRef.current = null
+
       setSearchState({ status: 'loading' })
       try {
-        const prices = await runSearchPrices({ countryId: resolvedCountryId })
+        const prices = await runSearchPrices({
+          countryId: resolvedCountryId,
+          signal: controller.signal,
+          onToken: (t) => {
+            activeTokenRef.current = t
+          },
+        })
+
+        if (runId !== runIdRef.current) return
         cacheRef.current.set(criteriaKey, {
           countryId: resolvedCountryId,
           prices,
@@ -103,11 +141,18 @@ export function TourSearchForm({ onSuccess, onEmpty }: Props) {
           setSearchState({ status: 'success', prices })
           onSuccess({ countryId: resolvedCountryId, prices })
         }
-      } catch {
+      } catch (err) {
+        if (runId !== runIdRef.current) return
+        if (err instanceof DOMException && err.name === 'AbortError') return
         setSearchState({
           status: 'error',
           message: 'Не вдалося виконати пошук. Спробуйте ще раз.',
         })
+      } finally {
+        if (runId === runIdRef.current) {
+          controllerRef.current = null
+          activeTokenRef.current = null
+        }
       }
     },
     [criteriaKey, resolvedCountryId, onEmpty, onSuccess],
@@ -128,7 +173,14 @@ export function TourSearchForm({ onSuccess, onEmpty }: Props) {
 
       <div style={{ height: 12 }} />
 
-      <button className="primaryButton" type="submit">
+      <button
+        className="primaryButton"
+        type="submit"
+        disabled={
+          searchState.status === 'loading' ||
+          searchState.status === 'cancelling'
+        }
+      >
         Знайти
       </button>
 
@@ -136,6 +188,10 @@ export function TourSearchForm({ onSuccess, onEmpty }: Props) {
 
       {searchState.status === 'loading' ? (
         <div className="searchStatus">Завантаження…</div>
+      ) : null}
+
+      {searchState.status === 'cancelling' ? (
+        <div className="searchStatus">Скасування попереднього пошуку…</div>
       ) : null}
 
       {searchState.status === 'error' ? (

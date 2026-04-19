@@ -82,6 +82,10 @@
   background: rgba(17, 24, 39, 0.04);
 }
 
+.comboItem[data-active='true'] {
+  background: rgba(59, 91, 255, 0.08);
+}
+
 .comboIcon {
   width: 20px;
   display: inline-flex;

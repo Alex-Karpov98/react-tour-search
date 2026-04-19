@@ -13,6 +13,7 @@ import {
   getHotel as apiGetHotel,
   getHotels as apiGetHotels,
   getPrice as apiGetPrice,
+  stopSearchPrices as apiStopSearchPrices,
   getSearchPrices as apiGetSearchPrices,
   searchGeo as apiSearchGeo,
   startSearchPrices as apiStartSearchPrices,
@@ -53,6 +54,12 @@ export async function getSearchPrices(
   token: string,
 ): Promise<GetSearchPricesResponse> {
   return await call<GetSearchPricesResponse>(apiGetSearchPrices(token))
+}
+
+export async function stopSearchPrices(
+  token: string,
+): Promise<{ message: string }> {
+  return await call<{ message: string }>(apiStopSearchPrices(token))
 }
 
 export async function getHotels(countryID: string): Promise<HotelsMap> {

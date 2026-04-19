@@ -34,6 +34,7 @@ export function Combobox<TItem extends ComboboxItem>({
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [items, setItems] = useState<TItem[]>([])
+  const [activeIndex, setActiveIndex] = useState(0)
 
   const insideRefs = useMemo(() => [inputWrapRef], [])
 
@@ -51,6 +52,7 @@ export function Combobox<TItem extends ComboboxItem>({
       try {
         const next = await loadItems(query, ctx)
         setItems(next)
+        setActiveIndex(0)
       } finally {
         setLoading(false)
       }
@@ -71,6 +73,14 @@ export function Combobox<TItem extends ComboboxItem>({
     },
     [onValueChange, open, load],
   )
+
+  const submitFormSoon = useCallback(() => {
+    const form = inputRef.current?.form
+    if (!form) return
+    setTimeout(() => {
+      form.requestSubmit()
+    }, 0)
+  }, [])
 
   const onPick = useCallback(
     (item: TItem) => {
@@ -97,6 +107,27 @@ export function Combobox<TItem extends ComboboxItem>({
           placeholder={placeholder}
           onChange={(e) => onInputChange(e.target.value)}
           onFocus={openAndLoad}
+          onKeyDown={(e) => {
+            if (!open) return
+            if (e.key === 'ArrowDown') {
+              e.preventDefault()
+              setActiveIndex((i) => Math.min(items.length - 1, i + 1))
+              return
+            }
+            if (e.key === 'ArrowUp') {
+              e.preventDefault()
+              setActiveIndex((i) => Math.max(0, i - 1))
+              return
+            }
+            if (e.key === 'Enter') {
+              if (items.length === 0) return
+              e.preventDefault()
+              const item =
+                items[Math.max(0, Math.min(activeIndex, items.length - 1))]
+              onPick(item)
+              submitFormSoon()
+            }
+          }}
           aria-expanded={open}
           aria-controls={listId}
           role="combobox"
@@ -129,12 +160,14 @@ export function Combobox<TItem extends ComboboxItem>({
             <div className="comboEmpty">{statusText}</div>
           ) : (
             <ul className="comboList">
-              {items.map((item) => (
+              {items.map((item, idx) => (
                 <li key={item.id}>
                   <button
                     type="button"
                     className="comboItem"
                     onClick={() => onPick(item)}
+                    aria-selected={idx === activeIndex}
+                    data-active={idx === activeIndex ? 'true' : 'false'}
                   >
                     <span className="comboIcon" aria-hidden="true">
                       {item.kind === 'country' && item.flagUrl ? (
