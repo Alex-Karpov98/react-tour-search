@@ -11,3 +11,22 @@ export function formatAmountUk(amount: number): string {
     amount,
   )
 }
+
+export function formatMoneyUk(amount: number, currency: string): string {
+  return `${formatAmountUk(amount)} ${currency.toUpperCase()}`
+}
+
+export function nightsBetweenInclusive(
+  startIso: string,
+  endIso: string,
+): number {
+  const [sy, sm, sd] = startIso.split('-').map(Number)
+  const [ey, em, ed] = endIso.split('-').map(Number)
+  if (!sy || !sm || !sd || !ey || !em || !ed) return 0
+
+  const start = Date.UTC(sy, sm - 1, sd)
+  const end = Date.UTC(ey, em - 1, ed)
+  const msPerDay = 86400000
+  const raw = Math.round((end - start) / msPerDay)
+  return raw > 0 ? raw : 0
+}

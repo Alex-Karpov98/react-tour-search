@@ -19,7 +19,7 @@ type SearchState =
 
 type Props = {
   onSuccess: (args: { countryId: string; prices: PricesMap }) => void
-  onEmpty: (countryId: string) => void
+  onEmpty: () => void
 }
 
 export function TourSearchForm({ onSuccess, onEmpty }: Props) {
@@ -31,7 +31,9 @@ export function TourSearchForm({ onSuccess, onEmpty }: Props) {
     status: 'idle',
   })
 
-  const cacheRef = useRef<Map<string, PricesMap>>(new Map())
+  const cacheRef = useRef<
+    Map<string, { countryId: string; prices: PricesMap }>
+  >(new Map())
 
   const showCountriesOnOpen = useMemo(
     () => selection.item?.kind === 'country' || !selection.item,
@@ -58,10 +60,16 @@ export function TourSearchForm({ onSuccess, onEmpty }: Props) {
     return item.countryId ?? null
   }, [selection.item])
 
+  const criteriaKey = useMemo(() => {
+    const item = selection.item
+    if (!item) return null
+    return `${item.kind}:${item.id}`
+  }, [selection.item])
+
   const onSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault()
-      if (!resolvedCountryId) {
+      if (!resolvedCountryId || !criteriaKey) {
         setSearchState({
           status: 'error',
           message: 'Будь ласка, оберіть напрямок подорожі.',
@@ -69,14 +77,14 @@ export function TourSearchForm({ onSuccess, onEmpty }: Props) {
         return
       }
 
-      const cached = cacheRef.current.get(resolvedCountryId)
+      const cached = cacheRef.current.get(criteriaKey)
       if (cached) {
-        if (Object.keys(cached).length === 0) {
+        if (Object.keys(cached.prices).length === 0) {
           setSearchState({ status: 'empty' })
-          onEmpty(resolvedCountryId)
+          onEmpty()
         } else {
-          setSearchState({ status: 'success', prices: cached })
-          onSuccess({ countryId: resolvedCountryId, prices: cached })
+          setSearchState({ status: 'success', prices: cached.prices })
+          onSuccess({ countryId: cached.countryId, prices: cached.prices })
         }
         return
       }
@@ -84,10 +92,13 @@ export function TourSearchForm({ onSuccess, onEmpty }: Props) {
       setSearchState({ status: 'loading' })
       try {
         const prices = await runSearchPrices({ countryId: resolvedCountryId })
-        cacheRef.current.set(resolvedCountryId, prices)
+        cacheRef.current.set(criteriaKey, {
+          countryId: resolvedCountryId,
+          prices,
+        })
         if (Object.keys(prices).length === 0) {
           setSearchState({ status: 'empty' })
-          onEmpty(resolvedCountryId)
+          onEmpty()
         } else {
           setSearchState({ status: 'success', prices })
           onSuccess({ countryId: resolvedCountryId, prices })
@@ -99,7 +110,7 @@ export function TourSearchForm({ onSuccess, onEmpty }: Props) {
         })
       }
     },
-    [resolvedCountryId, onEmpty, onSuccess],
+    [criteriaKey, resolvedCountryId, onEmpty, onSuccess],
   )
 
   return (

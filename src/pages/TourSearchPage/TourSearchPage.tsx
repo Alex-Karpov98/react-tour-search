@@ -10,19 +10,15 @@ export function TourSearchPage() {
     prices: PricesMap
   } | null>(null)
 
-  const [emptyCountryId, setEmptyCountryId] = useState<string | null>(null)
-
   const onSuccess = useCallback(
     (args: { countryId: string; prices: PricesMap }) => {
-      setEmptyCountryId(null)
       setResults(args)
     },
     [],
   )
 
-  const onEmpty = useCallback((countryId: string) => {
+  const onEmpty = useCallback(() => {
     setResults(null)
-    setEmptyCountryId(countryId)
   }, [])
 
   return (
@@ -38,8 +34,6 @@ export function TourSearchPage() {
         {results ? (
           <TourResults countryId={results.countryId} prices={results.prices} />
         ) : null}
-
-        {emptyCountryId ? <div /> : null}
       </div>
     </div>
   )

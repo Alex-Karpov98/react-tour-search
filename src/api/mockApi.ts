@@ -2,14 +2,18 @@ import type {
   CountriesMap,
   GeoResponse,
   GetSearchPricesResponse,
+  Hotel,
   HotelsMap,
+  PriceOffer,
   StartSearchResponse,
 } from './types'
 
 import {
   getCountries as apiGetCountries,
-  getSearchPrices as apiGetSearchPrices,
+  getHotel as apiGetHotel,
   getHotels as apiGetHotels,
+  getPrice as apiGetPrice,
+  getSearchPrices as apiGetSearchPrices,
   searchGeo as apiSearchGeo,
   startSearchPrices as apiStartSearchPrices,
 } from './api.js'
@@ -53,4 +57,16 @@ export async function getSearchPrices(
 
 export async function getHotels(countryID: string): Promise<HotelsMap> {
   return await call<HotelsMap>(apiGetHotels(countryID))
+}
+
+export async function getHotel(hotelId: number | string): Promise<Hotel> {
+  const normalized =
+    typeof hotelId === 'string' && /^\d+$/.test(hotelId)
+      ? Number(hotelId)
+      : hotelId
+  return await call<Hotel>(apiGetHotel(normalized))
+}
+
+export async function getPrice(priceId: string): Promise<PriceOffer> {
+  return await call<PriceOffer>(apiGetPrice(priceId))
 }

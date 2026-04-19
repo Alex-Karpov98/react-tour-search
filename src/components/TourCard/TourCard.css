@@ -1,0 +1,205 @@
+.tcCard {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.tcCard--list {
+  padding: 14px;
+  width: 100%;
+  max-width: 320px;
+  margin: 0;
+}
+
+.tcImgWrap {
+  aspect-ratio: 16 / 10;
+  background: #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.tcImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tcBody {
+  padding: 14px 0 0;
+  display: grid;
+  gap: 6px;
+}
+
+.tcTitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.tcMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #111827;
+}
+
+.tcFlag {
+  width: 18px;
+  height: 13px;
+  border-radius: 2px;
+  display: block;
+}
+
+.tcLabel {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.tcDate {
+  color: #111827;
+  font-size: 16px;
+}
+
+.tcPrice {
+  margin-top: 6px;
+  font-size: 24px;
+  font-weight: 900;
+  color: #111827;
+}
+
+.tcLink {
+  margin-top: 2px;
+  color: #1d4ed8;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.tcLink:hover {
+  text-decoration: underline;
+}
+
+/* Details variant */
+.tcCard--details {
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.1);
+}
+
+.tcHeader {
+  padding: 22px 22px 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.tcHero {
+  border-radius: 14px;
+  overflow: hidden;
+  background: #e5e7eb;
+  aspect-ratio: 16 / 9;
+  margin: 0 22px;
+}
+
+.tcHeroImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tcBody--details {
+  padding: 18px 22px 22px;
+}
+
+.tcTitle--details {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.tcMeta--details {
+  color: #374151;
+  gap: 14px;
+}
+
+.tcLocItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tcLocIcon {
+  opacity: 0.75;
+}
+
+.tcSection {
+  margin-top: 14px;
+}
+
+.tcSectionTitle {
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.tcDesc {
+  color: #6b7280;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.tcServices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.tcServiceItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #374151;
+}
+
+.tcServiceIcon {
+  opacity: 0.75;
+}
+
+.tcDivider {
+  height: 1px;
+  background: rgba(17, 24, 39, 0.12);
+  margin: 14px 0 0;
+}
+
+.tcDatesRow {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.tcFooter {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tcFooterPrice {
+  font-size: 28px;
+  font-weight: 900;
+  color: #111827;
+}
+
+.tcFooterBtn {
+  border: 1px solid rgba(17, 24, 39, 0.15);
+  background: #f3f4f6;
+  color: #111827;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: default;
+}

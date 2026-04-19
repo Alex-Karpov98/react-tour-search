@@ -8,6 +8,8 @@ export type Hotel = {
   cityName: string
   countryId: string
   countryName: string
+  description?: string
+  services?: Record<string, string>
 }
 
 export type CountriesMap = Record<string, Country>

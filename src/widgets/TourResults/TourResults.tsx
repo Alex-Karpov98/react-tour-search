@@ -4,7 +4,9 @@ import {
   buildTourCardsVm,
   type TourCardVm,
 } from '../../services/tourAggregationService'
-import { formatAmountUk, formatDateUk } from '../../utils/format'
+import { TourCard } from '../../components/TourCard/TourCard'
+import { formatMoneyUk } from '../../utils/format'
+import { tourDetailsUrl } from '../../utils/routes'
 import './TourResults.css'
 
 type Props = {
@@ -60,35 +62,22 @@ export function TourResults({ countryId, prices }: Props) {
       {!isLoading && state.status === 'ready' ? (
         <div className="cardsGrid">
           {state.cards.map((c) => (
-            <article key={c.priceId} className="tourCard">
-              <div className="tourImgWrap">
-                <img className="tourImg" src={c.imgUrl} alt="" />
-              </div>
-              <div className="tourBody">
-                <div className="tourTitle">{c.hotelName}</div>
-                <div className="tourMeta">
-                  {c.flagUrl ? (
-                    <img className="tourFlag" src={c.flagUrl} alt="" />
-                  ) : null}
-                  <span>
-                    {c.countryName}, {c.cityName}
-                  </span>
-                </div>
-                <div className="tourLabel">Старт туру</div>
-                <div className="tourDate">{formatDateUk(c.startDate)}</div>
-                <div className="tourPrice">
-                  {formatAmountUk(c.amount)} {c.currency.toUpperCase()}
-                </div>
-                <a
-                  className="tourLink"
-                  href={`/tour?priceId=${encodeURIComponent(
-                    c.priceId,
-                  )}&hotelId=${encodeURIComponent(c.hotelId)}`}
-                >
-                  Відкрити ціну
-                </a>
-              </div>
-            </article>
+            <TourCard
+              key={c.priceId}
+              variant="list"
+              title={c.hotelName}
+              countryName={c.countryName}
+              cityName={c.cityName}
+              imageUrl={c.imgUrl}
+              flagUrl={c.flagUrl}
+              startDate={c.startDate}
+              priceText={formatMoneyUk(c.amount, c.currency)}
+              action={{
+                kind: 'link',
+                to: tourDetailsUrl(c.priceId, c.hotelId),
+                label: 'Відкрити ціну',
+              }}
+            />
           ))}
         </div>
       ) : null}
